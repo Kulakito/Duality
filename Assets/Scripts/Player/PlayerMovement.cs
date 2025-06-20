@@ -28,12 +28,16 @@ public class PlayerMovement : MonoBehaviour
 
     void MovePlayer()
     {
+        if (playerInput.actions.actionMaps[0].name != "Player")
+            return;
         Vector3 dir = GetDirectionVector();
         transform.Translate(dir * speed * Time.deltaTime);
     }
 
     void RotatePlayer()
     {
+        if (playerInput.actions.actionMaps[0].name != "Player")
+            return;
         Vector3 dir = -GetDirectionVector();
         if (dir.magnitude == 0f)
             return;
