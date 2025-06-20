@@ -7,6 +7,12 @@ public class PlayerMovement : MonoBehaviour
     InputAction moveAction;
 
     [SerializeField] float speed = 5f;
+    [SerializeField] Transform meshTransform;
+
+    Vector3 GetDirectionVector()
+    {
+        return new Vector3(moveAction.ReadValue<Vector2>().x, 0f, moveAction.ReadValue<Vector2>().y).normalized;
+    }
 
     void Start()
     {
@@ -17,11 +23,20 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         MovePlayer();
+        RotatePlayer();
     }
 
     void MovePlayer()
     {
-        Vector3 dir = new Vector3(moveAction.ReadValue<Vector2>().x, 0f, moveAction.ReadValue<Vector2>().y);
-        transform.Translate(dir.normalized * speed * Time.deltaTime);
+        Vector3 dir = GetDirectionVector();
+        transform.Translate(dir * speed * Time.deltaTime);
+    }
+
+    void RotatePlayer()
+    {
+        Vector3 dir = -GetDirectionVector();
+        if (dir.magnitude == 0f)
+            return;
+        meshTransform.rotation = Quaternion.Slerp(meshTransform.rotation, Quaternion.LookRotation(dir), .15f);
     }
 }
