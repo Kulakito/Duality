@@ -9,6 +9,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float speed = 5f;
     [SerializeField] Transform meshTransform;
 
+    [SerializeField] float interactRange;
+
+    public bool IsHiding { get; private set; }
+    private HidingObject _hidingObject;
+    private Vector3 _originalPos;
+
     Vector3 GetDirectionVector()
     {
         return new Vector3(moveAction.ReadValue<Vector2>().x, 0f, moveAction.ReadValue<Vector2>().y).normalized;
@@ -22,6 +28,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (IsHiding) return;
+
         MovePlayer();
         RotatePlayer();
     }
@@ -43,4 +51,41 @@ public class PlayerMovement : MonoBehaviour
             return;
         meshTransform.rotation = Quaternion.Slerp(meshTransform.rotation, Quaternion.LookRotation(dir), .15f);
     }
+
+    private void OnInteract()
+    {
+        if (_hidingObject == null)
+        {
+            if (Physics.Raycast(meshTransform.position, -meshTransform.forward, out RaycastHit hit, interactRange) && hit.collider.TryGetComponent(out Interactable interactable))
+            {
+                if (interactable is HidingObject hidingObject)
+                {
+                    _hidingObject = hidingObject;
+
+                    _originalPos = transform.position;
+                    transform.position = hidingObject.HideSpot.position;
+
+                    IsHiding = true;
+                    hidingObject.Interact();
+                }
+                else interactable.Interact();
+            }
+        }
+        else
+        {
+            transform.position = _originalPos;
+
+            IsHiding = false;
+            _hidingObject.Interact();
+            _hidingObject = null;
+            _originalPos = Vector3.zero;
+        }
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(meshTransform.position, -meshTransform.forward * interactRange);
+    }
+
 }
