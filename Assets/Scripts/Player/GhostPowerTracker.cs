@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class GhostPowerTracker : MonoBehaviour
 {
@@ -28,6 +29,8 @@ public class GhostPowerTracker : MonoBehaviour
 
     PlayerVisibility visibility;
 
+    public static event Action OnGhostPowerEnd;
+
     void Start()
     {
         ghostPower = maxPower;
@@ -46,5 +49,6 @@ public class GhostPowerTracker : MonoBehaviour
     void GameOver()
     {
         print("Ur otta power");
+        OnGhostPowerEnd?.Invoke();
     }
 }
