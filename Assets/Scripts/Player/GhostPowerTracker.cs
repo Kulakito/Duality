@@ -22,6 +22,8 @@ public class GhostPowerTracker : MonoBehaviour
         }
     }
 
+    float powerAtRoomStart;
+
     [SerializeField] float maxPower = 1f;
     [SerializeField] float drainingSpeed = 1f;
 
@@ -34,6 +36,7 @@ public class GhostPowerTracker : MonoBehaviour
     void Start()
     {
         ghostPower = maxPower;
+        powerAtRoomStart = ghostPower;
         visibility = FindFirstObjectByType<PlayerVisibility>();
     }
 
@@ -50,5 +53,15 @@ public class GhostPowerTracker : MonoBehaviour
     {
         print("Ur otta power");
         OnGhostPowerEnd?.Invoke();
+    }
+
+    public void UpdatePower()
+    {
+        powerAtRoomStart = ghostPower;
+    }
+
+    public void ResetPower()
+    {
+        ghostPower = powerAtRoomStart;
     }
 }

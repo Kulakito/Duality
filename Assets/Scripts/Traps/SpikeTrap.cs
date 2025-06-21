@@ -14,6 +14,7 @@ public class SpikeTrap : Trap
 
     PlayerVisibility vis;
     float i;
+    bool isResetting;
 
     void Start()
     {
@@ -35,8 +36,9 @@ public class SpikeTrap : Trap
             Collider[] cs = Physics.OverlapBox(transform.position, boxShape, Quaternion.identity, mask);
             foreach (Collider c in cs)
             {
-                if (c.gameObject.tag == "Player" && vis.isGhost == effectGhost)
+                if (c.gameObject.tag == "Player" && vis.isGhost == effectGhost && !isResetting)
                 {
+                    isResetting = true;
                     GameOver();
                 }
             }
@@ -45,11 +47,15 @@ public class SpikeTrap : Trap
 
     IEnumerator LifeCycle()
     {
+        if (isResetting)
+            StopCoroutine(LifeCycle());
         Perform();
         if (!isActive)
         {
             for (i = actTime; i > 0; i -= Time.deltaTime)
             {
+                if (isResetting)
+                    break;
                 yield return null;
             }
         }
@@ -57,11 +63,16 @@ public class SpikeTrap : Trap
         {
             for (i = 0; i < inactTime; i += Time.deltaTime)
             {
+                if (isResetting)
+                    break;
                 yield return null;
             }
         }
-        isActive = !isActive;
-        StartCoroutine(LifeCycle());
+        if (!isResetting)
+        {
+            isActive = !isActive;
+            StartCoroutine(LifeCycle());
+        }
     }
 
     protected override void Perform()
@@ -80,11 +91,14 @@ public class SpikeTrap : Trap
 
     public override void ResetTrap()
     {
-        
+        isActive = false;
+        isResetting = false;
+        StartCoroutine(LifeCycle());
     }
 
     void GameOver() // temp solution
     {
         print("RIP bozo");
+        FindFirstObjectByType<RoomManager>().ResetRoom();
     }
 }
