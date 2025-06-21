@@ -58,7 +58,6 @@ public class PlayerMovement : MonoBehaviour
         {
             if (Physics.Raycast(meshTransform.position, -meshTransform.forward, out RaycastHit hit, interactRange) && hit.collider.TryGetComponent(out Interactable interactable))
             {
-                print(hit.collider.name);
                 if (interactable is HidingObject hidingObject)
                 {
                     _hidingObject = hidingObject;
