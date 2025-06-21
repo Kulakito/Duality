@@ -5,6 +5,12 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] GameObject _losePanel;
 
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(_losePanel.transform.parent.gameObject);
+    }
+
     private void Start()
     {
         GhostPowerTracker.OnGhostPowerEnd += EnableLosePanel;
@@ -23,6 +29,7 @@ public class GameManager : MonoBehaviour
     public void Restart()
     {
         SceneManager.LoadScene(0);
+        _losePanel.SetActive(false);
     }
 
     public void Quit()
