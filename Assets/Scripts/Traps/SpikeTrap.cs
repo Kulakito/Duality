@@ -25,6 +25,9 @@ public class SpikeTrap : Trap
 
     void Update()
     {
+        if (isResetting)
+            return;
+
         if (!isActive)
         {
             indicator.fillAmount = i / actTime;
@@ -36,9 +39,8 @@ public class SpikeTrap : Trap
             Collider[] cs = Physics.OverlapBox(transform.position, boxShape, Quaternion.identity, mask);
             foreach (Collider c in cs)
             {
-                if (c.gameObject.tag == "Player" && vis.isGhost == effectGhost && !isResetting)
+                if (c.gameObject.tag == "Player" && vis.isGhost == effectGhost)
                 {
-                    isResetting = true;
                     GameOver();
                 }
             }
@@ -47,11 +49,11 @@ public class SpikeTrap : Trap
 
     IEnumerator LifeCycle()
     {
-        if (isResetting)
-            StopCoroutine(LifeCycle());
-        Perform();
+        //Perform();
         if (!isActive)
         {
+            rend.material = inactMat;
+            indicator.color = Color.green;
             for (i = actTime; i > 0; i -= Time.deltaTime)
             {
                 if (isResetting)
@@ -61,6 +63,8 @@ public class SpikeTrap : Trap
         }
         else
         {
+            rend.material = actMat;
+            indicator.color = Color.red;
             for (i = 0; i < inactTime; i += Time.deltaTime)
             {
                 if (isResetting)
@@ -75,7 +79,7 @@ public class SpikeTrap : Trap
         }
     }
 
-    protected override void Perform()
+    /*protected override void Perform()
     {
         if (isActive)
         {
@@ -87,13 +91,22 @@ public class SpikeTrap : Trap
             rend.material = inactMat;
             indicator.color = Color.green;
         }
-    }
+    }*/
 
     public override void ResetTrap()
     {
+        StartCoroutine(Res());
+    }
+
+    IEnumerator Res()
+    {
+        isResetting = true;
+        StopCoroutine(LifeCycle());
         isActive = false;
+        yield return null;
         isResetting = false;
         StartCoroutine(LifeCycle());
+        yield return null;
     }
 
     void GameOver() // temp solution
