@@ -16,6 +16,16 @@ public class SpikeTrap : Trap
     float i;
     bool isResetting;
 
+    private void OnEnable()
+    {
+        RoomManager.OnReset += ResetTrap;
+    }
+
+    private void OnDisable()
+    {
+        RoomManager.OnReset -= ResetTrap;
+    }
+
     void Start()
     {
         vis = FindFirstObjectByType<PlayerVisibility>();
@@ -49,7 +59,6 @@ public class SpikeTrap : Trap
 
     IEnumerator LifeCycle()
     {
-        //Perform();
         if (!isActive)
         {
             rend.material = inactMat;
@@ -79,21 +88,7 @@ public class SpikeTrap : Trap
         }
     }
 
-    /*protected override void Perform()
-    {
-        if (isActive)
-        {
-            rend.material = actMat;
-            indicator.color = Color.red;
-        }
-        else
-        {
-            rend.material = inactMat;
-            indicator.color = Color.green;
-        }
-    }*/
-
-    public override void ResetTrap()
+    protected override void ResetTrap()
     {
         StartCoroutine(Res());
     }
@@ -109,7 +104,7 @@ public class SpikeTrap : Trap
         yield return null;
     }
 
-    void GameOver() // temp solution
+    void GameOver() // temp solution... or so?
     {
         print("RIP bozo");
         FindFirstObjectByType<RoomManager>().ResetRoom();

@@ -33,6 +33,18 @@ public class GhostPowerTracker : MonoBehaviour
 
     public static event Action OnGhostPowerEnd;
 
+    private void OnEnable()
+    {
+        RoomManager.OnReset += ResetPower;
+        RoomManager.OnRoomLoad += UpdatePower;
+    }
+
+    private void OnDisable()
+    {
+        RoomManager.OnReset -= ResetPower;
+        RoomManager.OnRoomLoad -= UpdatePower;
+    }
+
     void Start()
     {
         ghostPower = maxPower;
@@ -55,12 +67,12 @@ public class GhostPowerTracker : MonoBehaviour
         OnGhostPowerEnd?.Invoke();
     }
 
-    public void UpdatePower()
+    void UpdatePower()
     {
         powerAtRoomStart = ghostPower;
     }
 
-    public void ResetPower()
+    void ResetPower()
     {
         ghostPower = powerAtRoomStart;
     }

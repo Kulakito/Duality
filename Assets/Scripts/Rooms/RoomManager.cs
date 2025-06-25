@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class RoomManager : MonoBehaviour
 {
@@ -6,6 +7,9 @@ public class RoomManager : MonoBehaviour
     [SerializeField] Transform camTr, playerTr;
 
     int curId;
+
+    public static Action OnReset;
+    public static Action OnRoomLoad;
 
     /*void Start()
     {
@@ -30,20 +34,14 @@ public class RoomManager : MonoBehaviour
     {
         curId++;
         rooms[curId].roomObj.SetActive(true);
+        OnRoomLoad?.Invoke();
         playerTr.position = rooms[curId].playerStartingPoint.position;
-        if (FindFirstObjectByType<GhostPowerTracker>() != null)
-            FindFirstObjectByType<GhostPowerTracker>().UpdatePower();
     }
 
     public void ResetRoom()
     {
-        foreach (Trap trap in rooms[curId].roomObj.transform.GetComponentsInChildren<Trap>())
-        {
-            trap.ResetTrap();
-        }
+        OnReset?.Invoke();
         playerTr.position = rooms[curId].playerStartingPoint.position;
-        if (FindFirstObjectByType<GhostPowerTracker>() != null)
-            FindFirstObjectByType<GhostPowerTracker>().ResetPower();
     }
 }
 

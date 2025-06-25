@@ -2993,7 +2993,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8d4d60f1427a8440b4ee15303b113cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  speed: 7.5
   meshTransform: {fileID: 1764761621}
   interactRange: 0
 --- !u!114 &1747841229
